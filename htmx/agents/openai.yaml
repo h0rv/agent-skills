@@ -1,0 +1,4 @@
+interface:
+  display_name: "HTMX"
+  short_description: "Build simple hypermedia UIs with HTMX"
+  default_prompt: "Use $htmx to build a simple HTMX flow, and only use SSE where true server push is needed."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "FastHTML"
+  short_description: "Build idiomatic FastHTML apps in Python"
+  default_prompt: "Use $fasthtml to build or refactor an idiomatic FastHTML app with correct route signatures and data binding."
