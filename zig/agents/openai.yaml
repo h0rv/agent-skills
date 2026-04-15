@@ -1,0 +1,4 @@
+interface:
+  display_name: "Zig"
+  short_description: "Use current Zig language and std APIs"
+  default_prompt: "Use $zig to build or review Zig code against the current official Zig language and standard-library APIs, including std, std.posix, and build.zig."
