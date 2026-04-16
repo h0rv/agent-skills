@@ -1,0 +1,4 @@
+interface:
+  display_name: "Elixir"
+  short_description: "Use current Elixir, OTP, and Phoenix APIs"
+  default_prompt: "Use $elixir to write, review, or update Elixir, OTP, Phoenix, and LiveView code against the current stable docs and ecosystem conventions."
