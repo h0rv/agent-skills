@@ -6,6 +6,28 @@
 - `elixir`
 - `fastai`
 
+## Install with Vercel skills
+
+List available skills:
+
+```bash
+npx skills add h0rv/agent-skills --list
+```
+
+Install one skill:
+
+```bash
+npx skills add h0rv/agent-skills --skill fastai
+```
+
+Install every skill in this repo:
+
+```bash
+npx skills add h0rv/agent-skills --all
+```
+
+## Manual symlinks
+
 ```bash
 mkdir -p ~/.agents/skills
 ln -sfn "$PWD/htmx" ~/.agents/skills/htmx
