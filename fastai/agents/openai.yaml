@@ -1,0 +1,4 @@
+interface:
+  display_name: "fastai"
+  short_description: "Build production-ready fastai models"
+  default_prompt: "Use $fastai to build, debug, or productionize an idiomatic fastai workflow with current docs and safe deployment guidance."
