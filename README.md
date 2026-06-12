@@ -5,6 +5,7 @@
 - `zig`
 - `elixir`
 - `fastai`
+- `devenv`
 
 ## Install with Vercel skills
 
@@ -35,4 +36,5 @@ ln -sfn "$PWD/fasthtml" ~/.agents/skills/fasthtml
 ln -sfn "$PWD/zig" ~/.agents/skills/zig
 ln -sfn "$PWD/elixir" ~/.agents/skills/elixir
 ln -sfn "$PWD/fastai" ~/.agents/skills/fastai
+ln -sfn "$PWD/devenv" ~/.agents/skills/devenv
 ```

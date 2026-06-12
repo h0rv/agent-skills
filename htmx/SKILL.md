@@ -93,8 +93,7 @@ Use the htmx SSE extension only when the server has new information to push to t
 
 Do not use SSE for request-response flows, writes, or pseudo-polling loops. If the client needs to send data, use a form, `hx-post`, or another bidirectional mechanism.
 
-Read [references/sse-patterns.md](references/sse-patterns.md) before adding or reviewing SSE behavior.
-Read [references/sse-server-checklist.md](references/sse-server-checklist.md) before implementing an SSE endpoint.
+Read [references/sse-patterns.md](references/sse-patterns.md) before adding or reviewing SSE behavior. Read [references/sse-server-checklist.md](references/sse-server-checklist.md) before implementing an SSE endpoint.
 
 ## Review Checklist
 

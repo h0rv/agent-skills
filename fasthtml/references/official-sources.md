@@ -4,18 +4,12 @@ This skill was built against the official FastHTML docs and upstream repositorie
 
 ## Read In This Order
 
-1. Best-practices doc:
-   `https://fastht.ml/docs/ref/best_practice.html`
-2. Concise guide:
-   `https://www.fastht.ml/docs/ref/concise_guide.html`
-3. LLM context file:
-   `https://www.fastht.ml/docs/llms-ctx.txt`
-4. Handler docs:
-   `https://www.fastht.ml/docs/ref/handlers.html`
-5. Core API:
-   `https://fastht.ml/docs/api/core.html`
-6. Response types:
-   `https://www.fastht.ml/docs/ref/response_types.html`
+1. Best-practices doc: `https://fastht.ml/docs/ref/best_practice.html`
+2. Concise guide: `https://www.fastht.ml/docs/ref/concise_guide.html`
+3. LLM context file: `https://www.fastht.ml/docs/llms-ctx.txt`
+4. Handler docs: `https://www.fastht.ml/docs/ref/handlers.html`
+5. Core API: `https://fastht.ml/docs/api/core.html`
+6. Response types: `https://www.fastht.ml/docs/ref/response_types.html`
 
 ## Repos
 

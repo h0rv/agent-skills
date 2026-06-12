@@ -15,7 +15,7 @@ Use this reference when deciding how high or low in the fastai stack to work.
 
 ## Version Baseline
 
-As of 2026-06-03, latest released fastai is 2.8.7 on PyPI, released 2026-02-14. PyPI lists Python >=3.10. GitHub release notes for v2.8.7 allow PyTorch <3. Verify both before making a version-sensitive claim.
+As of 2026-06-03, latest released fastai is 2.8.7 on PyPI, released 2026-02-14. PyPI lists Python >=3.10. GitHub release notes for v2.8.7 allow PyTorch \<3. Verify both before making a version-sensitive claim.
 
 Use:
 

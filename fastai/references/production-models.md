@@ -39,7 +39,7 @@ python -m pip freeze
 
 Rules:
 
-- Pin fastai and PyTorch together; fastai 2.8.7 release notes allow PyTorch <3, but hardware-specific PyTorch wheels still matter.
+- Pin fastai and PyTorch together; fastai 2.8.7 release notes allow PyTorch \<3, but hardware-specific PyTorch wheels still matter.
 - Use containers or lockfiles for reproducible training and serving.
 - Keep notebooks for exploration, but put reusable transforms, label functions, model constructors, losses, and metrics in importable modules.
 - Treat Colab/Kaggle environments as exploratory unless dependencies and artifacts are pinned.

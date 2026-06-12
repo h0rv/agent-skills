@@ -8,7 +8,7 @@ Use these sources before web answers, forum posts, or old notebooks.
 - GitHub releases: https://github.com/fastai/fastai/releases
 - GitHub source: https://github.com/fastai/fastai
 
-As of 2026-06-03, PyPI lists fastai 2.8.7 as the latest release, released 2026-02-14, requiring Python >=3.10. GitHub marks v2.8.7 as latest and notes PyTorch <3 support. Re-check these pages before version-sensitive work.
+As of 2026-06-03, PyPI lists fastai 2.8.7 as the latest release, released 2026-02-14, requiring Python >=3.10. GitHub marks v2.8.7 as latest and notes PyTorch \<3 support. Re-check these pages before version-sensitive work.
 
 ## Primary
 
