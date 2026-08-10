@@ -7,6 +7,7 @@
 - `fastai`
 - `devenv`
 - `dspy`
+- `modern-python`
 
 ## Install with Vercel skills
 
@@ -39,4 +40,5 @@ ln -sfn "$PWD/elixir" ~/.agents/skills/elixir
 ln -sfn "$PWD/fastai" ~/.agents/skills/fastai
 ln -sfn "$PWD/devenv" ~/.agents/skills/devenv
 ln -sfn "$PWD/dspy" ~/.agents/skills/dspy
+ln -sfn "$PWD/modern-python" ~/.agents/skills/modern-python
 ```
