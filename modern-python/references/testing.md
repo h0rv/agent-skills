@@ -2,9 +2,12 @@
 
 Pushing checks into the type checker eliminates a whole *category* of
 test — you don't need a test asserting a function returns the type its
-signature already says it returns, or that a Pydantic model rejects a
-value of the wrong Python type, because `ty`/Pydantic already guarantee
-that for free. It doesn't eliminate testing altogether — it should
+signature already says it returns, or that a Pydantic model enforces its
+configured validation policy, because `ty`/Pydantic already guarantee
+that for free. Pydantic's default (lax) mode is coercive, not
+type-rejecting — an `int` field accepts `"123"` — so keep tests around
+the boundary: what gets coerced, what gets rejected, and what strict
+mode would change about that. It doesn't eliminate testing altogether — it should
 redirect testing effort toward the things a type genuinely can't verify:
 behavior, business-logic correctness, and the runtime invariants that
 live inside a parse step rather than in a type signature.

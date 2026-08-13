@@ -18,7 +18,7 @@ and wondering if there's now a more direct way to say it.
 | `tomllib` | Reading TOML config from the stdlib, no dependency needed |
 | `Annotated[T, ...]` | Attaching validation/metadata to a type without a wrapper class (Pydantic `Field`, dependency-injection markers) |
 | `dataclasses.KW_ONLY` | Forcing keyword-only fields partway through a dataclass without a `*` splitting inheritance awkwardly |
-| `functools.cached_property` | A property computed once and memoized on the instance — needs a reserved slot to work with `slots=True` (see [data-modeling.md](data-modeling.md)) |
+| `functools.cached_property` | A property computed once and memoized on the instance — requires an instance `__dict__`; for slotted dataclasses, keep `__dict__` or compute and store the value eagerly (see [data-modeling.md](data-modeling.md)) |
 | `match`/`case` | Structural destructuring plus exhaustiveness, in place of `isinstance` chains — see [exhaustiveness.md](exhaustiveness.md) and [control-flow.md](control-flow.md) |
 | `X | None` | Over `Optional[X]` — same meaning, no import, and reads left-to-right |
 | `list[X]`, `dict[K, V]` | Over `List[X]`, `Dict[K, V]` from `typing` — the builtins have supported generics since 3.9 |
