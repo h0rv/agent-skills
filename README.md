@@ -8,6 +8,7 @@
 - `devenv`
 - `dspy`
 - `modern-python`
+- `formal-modeling`
 
 ## Install with Vercel skills
 
@@ -41,4 +42,5 @@ ln -sfn "$PWD/fastai" ~/.agents/skills/fastai
 ln -sfn "$PWD/devenv" ~/.agents/skills/devenv
 ln -sfn "$PWD/dspy" ~/.agents/skills/dspy
 ln -sfn "$PWD/modern-python" ~/.agents/skills/modern-python
+ln -sfn "$PWD/formal-modeling" ~/.agents/skills/formal-modeling
 ```
