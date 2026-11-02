@@ -1,4 +1,10 @@
 /.codex
+
+# Local skill installations, not the source skills.
+/.agents/skills/
+/.claude/skills/
+/agent/skills/
+/skills-lock.json
 __pycache__/
 .pytest_cache/
 .hypothesis/

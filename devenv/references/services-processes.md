@@ -28,7 +28,7 @@ services.redis.enable = true;
 
 devenv ships 40+ services (mysql, mongodb, elasticsearch/opensearch, kafka, rabbitmq, nginx, caddy, minio, mailpit, temporal, …). Find options with `devenv search services.<name>` or `https://devenv.sh/services/`.
 
-Services store state under `$DEVENV_STATE/<service>`. **`initialDatabases` / `initialScript` only run when that data dir is created.** To re-run init after changing them, delete the dir (e.g. `rm -rf .devenv/state/postgres`) and `devenv up` again.
+Services store state under `$DEVENV_STATE/<service>`. **`initialDatabases` / `initialScript` only run when that data dir is created.** Prefer a migration when an existing database contains data. Before resetting state, confirm the exact directory and get the user's approval to discard its contents. Stop the service, then back up or move its state directory before starting it again. Do not delete database state as routine troubleshooting.
 
 ## Processes
 

@@ -40,7 +40,9 @@ optimized.save("artifacts/extract/", save_program=True)   # whole program + meta
 loaded = dspy.load("artifacts/extract/")
 ```
 
-State-only JSON is diffable and reviewable, which is what you want for human sign-off on evolved instructions and for tracking changes over time. Keep the artifact under version control, record which model and dataset produced it, and re-optimize as a deliberate step rather than editing the artifact.
+State-only JSON is diffable and reviewable. Inspect prompts and embedded demonstrations for private examples and secrets before committing an artifact. Keep sensitive artifacts in approved private storage instead of Git. Record which model and dataset produced each artifact, and re-optimize deliberately rather than editing it by hand.
+
+Whole-program artifacts use executable pickle/cloudpickle serialization. Only load artifacts from trusted, verified sources; never load user uploads or arbitrary downloaded programs. Prefer state-only JSON when whole-program serialization is unnecessary. JSON still needs content review before its prompts or demonstrations are used.
 
 ## Observability
 
@@ -48,11 +50,11 @@ State-only JSON is diffable and reviewable, which is what you want for human sig
 - **Logfire**: `logfire.instrument_dspy()` captures DSPy calls as spans (verify the exact call against current Logfire docs).
 - During development, `dspy.inspect_history(n=...)` prints the last prompts and completions, which is the fastest way to see what the optimizer actually produced and what the model received.
 
-Inspecting the real prompt sent to the model is the single most useful debugging habit; most "the optimizer did nothing" reports are visible immediately in the history.
+Prompts, predictions, histories, and traces can contain private data. Confirm approval for each logging destination and redact sensitive fields before export. Inspect histories locally without copying private examples into public logs or issues.
 
 ## Caching
 
-DSPy caches LM calls by default, which makes re-runs cheap and reproducible but can hide changes during development. If results look stale after a code change, suspect the cache. Configure or disable it when you need fresh calls.
+DSPy caches LM calls by default, which makes re-runs cheap and reproducible but can hide changes during development. If results look stale after a code change, suspect the cache. Configure or disable it when you need fresh calls. Treat cache contents as copies of the input data, with the same access and retention rules.
 
 ## Common failure modes
 

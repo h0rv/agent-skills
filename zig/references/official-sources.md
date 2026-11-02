@@ -16,7 +16,7 @@ Use these primary sources in this order:
 - allocators, collections, strings, formatting, testing:
   - standard-library docs plus local std source
 - `std.posix`, sockets, file descriptors, process helpers:
-  - standard-library docs for `std.posix`, `std.process`, `std.fs`, and `std.net`
+  - standard-library docs and matching source for `std.Io.File`, `std.Io.Dir`, `std.Io.net`, `std.process`, and `std.posix`
 - `build.zig`:
   - language reference build section plus `std.Build` source
 - deprecated or recently changed APIs:
@@ -25,13 +25,19 @@ Use these primary sources in this order:
 ## Source URLs
 
 - https://ziglang.org/download/
-- https://ziglang.org/documentation/0.16.0/
-- https://ziglang.org/news/0.16.0-released/
-- https://ziglang.org/download/0.16.0/release-notes.html
+- https://ziglang.org/download/index.json
+- https://ziglang.org/documentation/0.17.0/
+- https://ziglang.org/documentation/0.17.0/std/
+- https://ziglang.org/download/0.17.0/release-notes.html
+- https://ziglang.org/download/0.17.0/release-notes.html#SafeAllocator-Introduced
+- https://ziglang.org/download/0.17.0/release-notes.html#C-Translation-Moving-to-External-Package
+- https://ziglang.org/download/0.17.0/release-notes.html#Language-Changes
 
 ## Current version note
 
-As of 2026-04-15:
+As checked on 2026-11-01:
 
-- latest stable is `0.16.0`, released on 2026-04-14
-- use the official download page to resolve the exact current `master` snapshot
+- latest stable is `0.17.0`, released on 2026-10-01
+- `master` is `0.18.0-dev.828+9da287565`, dated 2026-10-31
+
+Use the official download index to resolve newer stable releases and exact development snapshots. Use the project's pinned compiler even when it is older than this snapshot.

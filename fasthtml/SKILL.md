@@ -28,7 +28,7 @@ app, rt = fast_app()
 def index():
     return Titled("App", P("Hello"))
 
-@rt
+@rt("/save", methods=["POST"])
 def save(name: str):
     return P(f"Saved {name}")
 
@@ -40,7 +40,8 @@ serve()
 - Prefer `@rt` without a path argument. Function names become routes; `index` maps to `/`.
 - If you need verb-specific handlers on one path, use `@rt("/path") def get(...)`, `@rt("/path") def post(...)`, or `@app.get(...)` and `@app.post(...)`.
 - Do not assume bare `@rt` plus a function named `get` or `post` makes a method-specific route. Without an explicit path or explicit decorator method, bare `@rt` produces a function-name route with FastHTML's default GET/POST behavior.
-- Prefer GET for reads and POST for mutations. Older examples still show `PUT` and `DELETE`; follow existing code when editing, but default new code to GET/POST.
+- Use GET for reads and restrict mutations to POST on the server, e.g. `@rt("/create", methods=["POST"])`. `hx_post` alone does not restrict allowed methods. Bare `@rt` accepts GET and POST by default.
+- Cookie-authenticated mutations also need server-side CSRF validation and authorization. POST alone does not provide either. Follow the app's existing protections rather than adding a second scheme.
 - Prefer query parameters for internal HTMX flows unless path semantics are genuinely clearer.
 - Use route function objects in `href`, `action`, `hx_get`, and `hx_post`. Use `.to(...)` when arguments are needed.
 - Do not hard-code URLs that can be expressed as `handler` or `handler.to(...)`.
@@ -55,7 +56,7 @@ serve()
 - Keep form field names aligned with handler parameter names or structured-body field names.
 - Remember that `dict` captures raw body data, while `TypedDict` and typed classes trigger conversion.
 
-Read [handlers-and-typing.md](/home/h0rv/projects/agent-skills/fasthtml/references/handlers-and-typing.md) whenever the task touches route signatures, form binding, query params, cookies, headers, dataclasses, `TypedDict`, or router route functions.
+Read [handlers-and-typing.md](references/handlers-and-typing.md) whenever the task touches route signatures, form binding, query params, cookies, headers, dataclasses, `TypedDict`, or router route functions.
 
 ## Response Rules
 
@@ -65,7 +66,7 @@ Read [handlers-and-typing.md](/home/h0rv/projects/agent-skills/fasthtml/referenc
 - Use `RedirectResponse(...)` only when the repo already does so intentionally or the response semantics need to stay purely Starlette.
 - Use `Titled(...)` when you need a page title plus a containerized body.
 
-Read [response-patterns.md](/home/h0rv/projects/agent-skills/fasthtml/references/response-patterns.md) when a task involves fragments vs full pages, redirects, headers, or custom response behavior.
+Read [response-patterns.md](references/response-patterns.md) when a task involves fragments vs full pages, redirects, headers, or custom response behavior.
 
 ## App Structure Rules
 
@@ -77,7 +78,7 @@ Read [response-patterns.md](/home/h0rv/projects/agent-skills/fasthtml/references
 - Use Pico's default styling first; add extra CSS only when the default HTML semantics are not enough.
 - Use modern HTMX event attrs such as `hx_on__after_request`.
 
-Read [app-patterns.md](/home/h0rv/projects/agent-skills/fasthtml/references/app-patterns.md) for preferred project shape, fastlite usage, rendering helpers, and current best-practice guidance.
+Read [app-patterns.md](references/app-patterns.md) for preferred project shape, fastlite usage, rendering helpers, and current best-practice guidance.
 
 ## Source Selection
 
@@ -87,4 +88,4 @@ Read [app-patterns.md](/home/h0rv/projects/agent-skills/fasthtml/references/app-
 - Use the library source when behavior depends on runtime binding details.
 - Use the response docs or `core.py` when redirect or render behavior is unclear.
 
-Open [official-sources.md](/home/h0rv/projects/agent-skills/fasthtml/references/official-sources.md) for the exact docs, repos, and example files to consult.
+Open [official-sources.md](references/official-sources.md) for the exact docs, repos, and example files to consult.

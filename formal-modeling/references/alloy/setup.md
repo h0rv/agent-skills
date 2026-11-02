@@ -9,10 +9,24 @@ run on macOS with Alloy 6.2.0 and OpenJDK 21.
 brew install openjdk@21
 export PATH=/opt/homebrew/opt/openjdk@21/bin:$PATH
 
-mkdir -p ~/.local/share/alloy
-curl -sL -o ~/.local/share/alloy/alloy.jar \
-  https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar
+(
+  set -eu
+  alloy_dir="$HOME/.local/share/alloy"
+  mkdir -p "$alloy_dir"
+  artifact=$(mktemp "$alloy_dir/alloy.jar.XXXXXX")
+  trap 'rm -f "$artifact"' EXIT
+  curl --fail --show-error --silent --location \
+    --proto '=https' --proto-redir '=https' \
+    -o "$artifact" \
+    https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar
+  printf '%s  %s\n' \
+    '6b8c1cb5bc93bedfc7c61435c4e1ab6e688a242dc702a394628d9a9801edb78d' \
+    "$artifact" | shasum -a 256 -c -
+  mv "$artifact" "$alloy_dir/alloy.jar"
+)
 ```
+
+This hash pins the official GitHub release artifact downloaded on 2026-11-01. It detects changed bytes, not a compromised publisher. Investigate a mismatch instead of replacing the hash to bypass it. Failed downloads or checksum checks leave an existing installed JAR unchanged.
 
 A shell alias keeps the rest of this file short.
 
@@ -27,6 +41,8 @@ alloy exec -f -t text model.als        # run every command in the file
 alloy exec -f -c v1_is_sound model.als # run one command by name
 alloy commands model.als               # list the commands without running them
 ```
+
+`-f` overwrites the model's output directory. Use `-o <new-directory>` without `-f` when you want to preserve earlier results.
 
 Each line of output names the command and its result.
 

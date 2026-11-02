@@ -46,6 +46,8 @@ Use named events that line up with stable UI regions.
 
 When the SSE payload is already the HTML fragment you want, prefer `sse-swap`. It keeps the behavior direct and local.
 
+`sse-swap` parses its payload as HTML, even inside `<pre>`. HTML-escape untrusted text such as logs, filenames, and commit messages before including it in a fragment. For plain-text rendering, use a text-only DOM update instead. Never stream raw process output directly into an HTML swap.
+
 Use `hx-trigger="sse:event-name"` with `hx-get` only when the event should cause a follow-up request for a broader or shared render:
 
 ```html
@@ -112,6 +114,8 @@ Before shipping SSE, verify the endpoint itself is correct:
 - Send events in SSE wire format with fields like `event:` and `data:`
 - End each event block with a blank line
 - Flush after each event when your runtime requires explicit flushing
+- Authorize access to the requested stream and its records
+- HTML-escape untrusted values before emitting HTML fragments
 - Stop work when the client disconnects
 - Send periodic comments or heartbeat events when the infrastructure needs keep-alives
 

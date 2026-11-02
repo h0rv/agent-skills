@@ -77,9 +77,9 @@ Current stable Zig exposes `std.Io` as the main I/O surface. Prefer `std.Io` ter
 ```zig
 const std = @import("std");
 
-pub fn main() !void {
+pub fn main(init: std.process.Init) !void {
     var stdout_buf: [1024]u8 = undefined;
-    var out = std.fs.File.stdout().writer(&stdout_buf);
+    var out = std.Io.File.stdout().writer(init.io, &stdout_buf);
     try out.interface.print("hello\n", .{});
     try out.interface.flush();
 }
@@ -91,10 +91,20 @@ For small debug-style output, `std.debug.print` is still the simplest option.
 
 Use Zig's C interop intentionally:
 
-- `@cImport` is deprecated in Zig `0.16.0`
-- `zig translate-c` remains a useful workflow for larger headers
-- prefer build-system-driven C translation for current code
+- `@cImport` is removed in Zig `0.17.0`
+- `zig translate-c` still exists, but `std.Build.Step.TranslateC` is deprecated
+- prefer the official external `translate-c` package for build-system-driven C translation
 - narrow the ABI boundary and convert to Zig-native types quickly
 - prefer Zig slices, enums, and tagged unions once data crosses the boundary
+
+For 0.17.x, add the matching translator dependency:
+
+```bash
+zig fetch --save git+https://codeberg.org/ziglang/translate-c#zig-0.17.x
+```
+
+Follow the package's version-matched build example using `@import("translate_c").Translator`, `.c_source_file`, and `translator.mod`. Do not replace `@cImport` with an unverified call to the deprecated build step.
+
+See the [official C translation migration](https://ziglang.org/download/0.17.0/release-notes.html#C-Translation-Moving-to-External-Package).
 
 When the project has substantial C surface area, keep translated declarations isolated in one place instead of sprinkling them across modules.

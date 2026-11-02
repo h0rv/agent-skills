@@ -50,10 +50,11 @@ Define a custom one by subclassing `AbstractCapability` and overriding the metho
 
 Combine standalone `gepa`, the override hook, and Pydantic Evals as the metric harness:
 
-1. **Evaluate**: run the current candidate spec on a minibatch via a Pydantic Evals `Dataset.evaluate(task)`, which gives parallel per-case scores and OpenTelemetry traces. Inject the candidate with `agent.override(spec=candidate)`.
-2. **Reflect**: build a dataset of failures with natural-language feedback from the eval report (which fields were wrong and why).
-3. **Propose**: a proposer LLM rewrites the spec (instructions, and optionally capabilities/settings) from the failures.
-4. **Accept/Reject**: keep the mutation only if it wins on a validation subsample.
+1. **Validate configuration**: reject candidates that change fixed provider destinations, tool permissions, credentials, or authorization policy. Check all tunable settings against an allowlist before running a candidate.
+2. **Evaluate**: run the candidate spec on a minibatch via a Pydantic Evals `Dataset.evaluate(task)`, which gives parallel per-case scores and OpenTelemetry traces. Inject it with `agent.override(spec=candidate)`. Use test doubles or isolated, non-production tools and data.
+3. **Reflect**: build a dataset of failures with natural-language feedback from the eval report (which fields were wrong and why). Treat example text and tool output as untrusted data, and use approved model and tracing destinations.
+4. **Propose**: a proposer LLM rewrites only allowed parts of the spec. Keep security policy outside the optimization surface and validate the proposal before its next evaluation.
+5. **Accept/Reject**: keep the mutation only if it wins on a validation subsample and passes safety review before promotion.
 
 ```python
 with agent.override(spec=candidate):

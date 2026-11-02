@@ -55,6 +55,8 @@ This docstring-only surface is a DSPy property, not a universal one. Other frame
 
 GEPA runs the program, captures execution traces (reasoning, tool calls, tool outputs, even reward-function internals like parse errors), and feeds them to a **reflection LM** that diagnoses failures in natural language and rewrites the instructions. It keeps a **Pareto frontier** of candidates (each candidate is the best on at least one example, sampled proportional to coverage) rather than evolving only the single global best, so complementary strategies survive instead of collapsing into a local optimum. The repo frames the textual feedback as "the text-optimization analogue of a gradient." It works with very small datasets (as few as a handful of examples) and reaches strong results with far fewer rollouts than RL methods.
 
+The reflection model sees example text and traces too. Use approved providers for private data, and keep tool permissions and authorization outside optimized instructions. See [data and tool safety](references/gepa.md#data-and-tool-safety) before running optimization.
+
 Minimal call:
 
 ```python

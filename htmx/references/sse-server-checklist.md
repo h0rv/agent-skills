@@ -20,6 +20,8 @@ Verify these basics:
 - Keep the connection open and write events over time
 - Flush after writes when the runtime requires it
 - Stop the loop when the client disconnects
+- Authorize access to the stream and its records
+- HTML-escape untrusted text in fragments; `sse-swap` interprets HTML even inside `<pre>`. Never send raw logs or process output into an HTML swap.
 
 ## Minimal event format
 

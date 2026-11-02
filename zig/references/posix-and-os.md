@@ -1,84 +1,60 @@
-# Zig POSIX And OS APIs
+# Zig POSIX and OS APIs
 
-## Contents
+This reference targets Zig 0.17.0. Check the project's compiler pin before applying these APIs to older code.
 
-- when to use `std.posix`
-- files and descriptors
-- sockets and networking
-- processes and subprocesses
-- cross-platform boundaries
+## Files and directories
 
-## When to use `std.posix`
+Prefer `std.Io.File` and `std.Io.Dir` for ordinary filesystem operations. Pass an explicit `std.Io` value to operations and cleanup:
 
-Use `std.posix` for low-level OS-facing work where file descriptors, permissions, signals, sockets, and syscall-shaped APIs are the right abstraction.
+```zig
+const std = @import("std");
 
-Prefer higher-level `std` modules first when they fit:
+pub fn main(init: std.process.Init) !void {
+    const io = init.io;
+    const file = try std.Io.Dir.cwd().openFile(io, "input.txt", .{});
+    defer file.close(io);
+}
+```
 
-- `std.fs` for ordinary file work
-- `std.Io` for current I/O interfaces
-- `std.net` for common networking flows
-- `std.process.Child` for subprocess management
-
-In Zig 0.16.0, many awkward medium-level `std.posix` and `std.os.windows` helpers were removed. When code hits that boundary, choose a direction explicitly:
-
-- go higher to `std.Io`
-- go lower to `std.posix.system`
-
-Use `std.posix` when the task is truly OS-level or descriptor-oriented.
-
-## Files and descriptors
-
-Common low-level entry points include:
-
-- `std.posix.openZ`
-- `std.posix.read`
-- `std.posix.write`
-- `std.posix.close`
-
-Review rules:
-
-- keep descriptor ownership obvious
-- `defer std.posix.close(fd)` once ownership is established
-- prefer Zig errors over manual errno plumbing
-- use `std.fs.File` when a file object is a better fit than a raw descriptor
+Keep file ownership visible. Do not copy older examples using `std.fs.File` or a `close()` call without `io`. For path helpers, prefer `std.Io.Dir.path` over the deprecated `std.fs.path` alias.
 
 ## Sockets and networking
 
-Current `std.posix` exposes direct socket APIs such as:
+Use `std.Io.net` for normal networking. Check its `IpAddress`, `HostName`, `Stream`, and `Server` APIs in the matching compiler's source. There is no root `std.net` export in 0.17.0.
 
-- `std.posix.socket`
-- `std.posix.bind`
-- `std.posix.listen`
-- `std.posix.connect`
-- `std.posix.send`
-- `std.posix.recv`
-- `std.posix.setsockopt`
+Pass `io` explicitly. Confirm the exact method and options for the target release rather than copying an older socket tutorial.
 
-Use `std.net` first for higher-level client/server code. Use `std.posix` when you need exact socket options, descriptor control, or OS-specific networking behavior.
+## When to use `std.posix`
+
+Use `std.posix` only when the task needs a platform-specific OS boundary. Many former wrappers are absent in 0.17.0, including `openZ`, `write`, `close`, `socket`, `bind`, `listen`, `connect`, `send`, and `recv`. Some wrappers, such as `read` and `setsockopt`, remain. Check declarations before assuming either presence or removal.
+
+Choose the level explicitly:
+
+- Prefer `std.Io` for portable file and network operations.
+- Use `std.posix.system` for intentional raw OS calls.
+
+Raw calls do not automatically provide the removed wrappers' Zig error handling. Handle the platform's return values and errors explicitly. Do not recommend `defer std.posix.close(fd)` on this release.
 
 ## Processes and subprocesses
 
-For spawning and managing child processes, prefer `std.process.Child`.
+Create children with `std.process.spawn(io, options)`. The returned `std.process.Child` is a handle, not the old constructor API. Use `child.wait(io)` and `child.kill(io)` as needed. For captured output, check `std.process.run(gpa, io, options)` and its allocation cleanup requirements.
 
-For process-wide helpers, use `std.process` intentionally. In Zig 0.16.0, environment variables and argv are no longer treated as ambient global state. Prefer:
+For application entry points, prefer `pub fn main(init: std.process.Init) !void`. Use `init.io` for I/O, `init.gpa` for general allocation, and `init.minimal` for arguments and environment. `std.process.Init.Minimal` does not provide an `io` field.
 
-- `pub fn main(init: std.process.Init) !void`
-- `pub fn main(init: std.process.Init.Minimal) !void`
-
-For current-directory access, prefer:
+For current-directory paths, check:
 
 - `std.process.currentPath(io, buffer)`
 - `std.process.currentPathAlloc(io, allocator)`
 
-When writing reusable libraries, avoid hiding process state deep inside helpers if the caller can pass the needed path, env, or argv data explicitly.
+Pass process state into reusable libraries instead of hiding access to arguments, environment, or the current directory inside helpers.
 
 ## Cross-platform boundaries
 
 Keep OS assumptions visible:
 
-- gate platform-specific code with `@import("builtin")`
-- prefer `builtin.os.tag` checks at clear module boundaries
-- isolate `std.posix` code from Windows-specific logic rather than interleaving both everywhere
-- validate path, encoding, and permission assumptions explicitly
+- Import target information with `@import("builtin")`.
+- Prefer `builtin.target.os.tag` over the deprecated `builtin.os.tag` alias.
+- Isolate POSIX and Windows code at module boundaries.
+- Check path encoding and permission assumptions explicitly.
 
 For C ABI or syscall-level work, keep the boundary narrow and typed.

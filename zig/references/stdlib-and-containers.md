@@ -15,10 +15,13 @@ Allocator choice is part of the API design.
 
 Common defaults:
 
-- `std.heap.GeneralPurposeAllocator` for ordinary application ownership
+- `init.gpa` from `std.process.Init` for ordinary application allocation
+- `std.heap.SafeAllocator.init(backing_allocator, .{})` when explicit allocator ownership is needed
 - `std.heap.ArenaAllocator` for phase-based allocation
 - `std.testing.allocator` in tests
 - caller-provided allocator parameters for reusable libraries
+
+`std.heap.GeneralPurposeAllocator` is absent in 0.17.0. `std.heap.DebugAllocator` is deprecated, so do not use it as the migration target. For an explicit `SafeAllocator`, obtain `.allocator()` and call `.deinit()` at the end of its lifetime. Its `deinit()` returns a leak count, not an `.ok` or `.leak` tag.
 
 Review rules:
 
@@ -55,7 +58,7 @@ var list = std.ArrayList(u8).initBuffer(&backing);
 try list.appendSliceBounded("zig");
 ```
 
-If you need the allocator-storing compatibility wrapper, use `std.array_list.Managed(T)` intentionally, but prefer the allocator-passing default shape for new code.
+`std.array_list.Managed(T)` and `AlignedManaged` are deprecated in 0.17.0. Use the allocator-passing shape for new code.
 
 ### Maps and sets
 
@@ -64,11 +67,11 @@ Use:
 - `std.HashMap`
 - `std.AutoHashMap`
 - `std.StringHashMap`
-- `std.ArrayHashMap`
-- `std.AutoArrayHashMap`
-- `std.StringArrayHashMap`
+- `std.array_hash_map.Custom`
+- `std.array_hash_map.Auto`
+- `std.array_hash_map.String`
 
-Choose `HashMap` for general hashed lookup and `ArrayHashMap` when insertion order or dense key/value arrays help the algorithm.
+Choose `HashMap` for general hashed lookup and `array_hash_map` when insertion order or dense key/value arrays help the algorithm. The old root `ArrayHashMap`, `AutoArrayHashMap`, and `StringArrayHashMap` exports are absent. The new `array_hash_map` types take allocators per operation.
 
 ### Struct-of-arrays and enum-indexed collections
 
@@ -90,7 +93,6 @@ Also keep these in mind:
 - `std.SinglyLinkedList`
 - `std.DoublyLinkedList`
 - `std.Treap`
-- `std.SegmentedList`
 
 Use them when the data structure matches the problem; do not force everything into `ArrayList`.
 
@@ -111,15 +113,16 @@ Use slices and byte-oriented helpers by default; do not assume Unicode semantics
 
 ## Formatting and parsing
 
-Common `std.fmt` entry points:
+For allocated formatting, use `gpa.print(format, args)` and free the returned slice with the same allocator. `std.fmt.allocPrint` is deprecated in 0.17.0.
 
-- `std.fmt.allocPrint`
+For parsing, use:
+
 - `std.fmt.parseInt`
 - `std.fmt.parseFloat`
 
 For output, prefer a real writer or `std.debug.print` depending on the need.
 
-Prefer `std.Io` over `std.io`; the 0.16.0 release notes explicitly move users toward `std.Io` and away from the older `std.io` surface.
+Use `std.Io` writers for normal output. File writers need an explicit `io` value and a buffer. Flush buffered output before returning. See [build-and-interop.md](build-and-interop.md) for a complete stdout example.
 
 ## JSON and serialization
 

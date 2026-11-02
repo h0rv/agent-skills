@@ -21,6 +21,8 @@ def index():
 serve()
 ```
 
+Before exposing an app to other users, set `static_path` to a dedicated public-assets directory. The default static root is the working directory, which may contain private files.
+
 ## Current Best Practices
 
 These come from the official best-practices doc and current source:
@@ -28,7 +30,7 @@ These come from the official best-practices doc and current source:
 - Prefer `@rt` and function-name routes.
 - Prefer `index()` for `/`.
 - Prefer query params over path params for many HTMX handlers.
-- Prefer GET/POST as the default verb set.
+- Use GET for reads and register mutations with explicit POST-only methods. `hx_post` is not a server-side method restriction.
 - Prefer route-function references and `.to(...)` over string paths.
 - Prefer `db.create(MyClass)` over manual table creation.
 - Prefer return-value chaining from fastlite `insert()` and `update()`.
@@ -84,7 +86,7 @@ def __ft__(self: Todo):
 Use route functions and HTMX together:
 
 ```python
-@rt
+@rt("/create", methods=["POST"])
 def create(todo: TodoForm):
     return todos.insert(todo)
 
@@ -95,6 +97,8 @@ Form(
     hx_swap="afterbegin",
 )
 ```
+
+For cookie-authenticated writes, also enforce the app's server-side CSRF protection and record-level authorization. Neither POST nor HTMX replaces those checks.
 
 Prefer the modern event-attribute spelling:
 

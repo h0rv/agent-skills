@@ -29,8 +29,10 @@ Prefer exact builtins for conversions:
 - `@ptrCast`
 - `@alignCast`
 - `@bitCast`
-- `@enumFromInt`
-- `@intFromEnum`
+- `@fromBackingInt`
+- `@backingInt`
+
+In 0.17.0, prefer `@fromBackingInt` and `@backingInt` over the deprecated `@enumFromInt` and `@intFromEnum` builtins. Use the older names only when the project's compiler requires them.
 
 Do not rely on clever coercions when crossing API boundaries.
 
@@ -125,4 +127,17 @@ Prefer:
 - `@hasDecl` and `@hasField` for compatibility or generic feature detection
 - `@import("builtin")` for target and mode information
 
+In 0.17.0, `@hasDecl` detects only public declarations. Do not use it to discover private declarations.
+
 Keep generic APIs narrow. If a function only needs one concrete capability, do not over-generalize it immediately.
+
+## Migrating to 0.17.0
+
+Read the [official language changes](https://ziglang.org/download/0.17.0/release-notes.html#Language-Changes) before changing older code:
+
+- Audit array and vector `@bitCast` operations for changed endian behavior. Do not assume successful compilation means identical results.
+- `@bitCast` of extern aggregates is no longer allowed.
+- Array multiplication, `void{}`, and `errdefer |err|` captures are removed.
+- Use `builtin.target.os.tag` instead of the deprecated `builtin.os.tag` alias.
+
+Compile and test with the exact target compiler. Do not apply these changes to a project pinned to an older release without checking its syntax and API support.

@@ -1,0 +1,23 @@
+{
+  "name": "h0rv-agent-skills",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Agent skills for programming languages and development tools",
+  "keywords": ["pi-package"],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "pi": {
+    "skills": [
+      "./devenv",
+      "./dspy",
+      "./elixir",
+      "./fastai",
+      "./fasthtml",
+      "./formal-modeling",
+      "./htmx",
+      "./modern-python",
+      "./zig"
+    ]
+  }
+}

@@ -20,6 +20,14 @@ GEPA (Genetic-Evolutionary Prompt Adaptation, sometimes read as Reflective Promp
 4. **Select**: evaluate candidates and keep a Pareto frontier rather than a single best, so candidates that win on different slices of the data all survive and can be combined.
 5. Repeat until the metric-call budget is exhausted.
 
+## Data and tool safety
+
+Training examples, tool outputs, error messages, and metric feedback can all reach the reflection model. Treat their text as data, not instructions. Review proposed prompts before deployment; a higher validation score is not evidence that a candidate is safe.
+
+Before a run, confirm that the task model, reflection model, and tracing services are approved for the data. Use synthetic or redacted examples by default. Exclude secrets from prompts, feedback, traces, caches, and saved demonstrations.
+
+Keep provider destinations, tool permissions, credentials, and authorization checks outside the optimization surface. Validate every candidate against allowed configuration values before evaluating it. Run tool-using candidates with test doubles or isolated, non-production tools and data. Delimiting input text can help readability, but it does not enforce these controls.
+
 ## What it needs
 
 - A **metric that returns score and feedback** (`dspy.Prediction(score=, feedback=)` or `{"score": float, "feedback": str}`), accepting `(gold, pred, trace, pred_name, pred_trace)`.

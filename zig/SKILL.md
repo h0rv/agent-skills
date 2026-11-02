@@ -1,18 +1,18 @@
 ---
 name: zig
-description: Write, review, explain, and update Zig code using current official Zig language and standard-library APIs. Use when Codex needs up-to-date Zig guidance for language features, typing, enums, control flow, allocators, data structures, `std`, `std.posix`, `std.fs`, `std.Io`, testing, `build.zig`, packages, C interop, or cross-platform systems programming.
+description: Write, review, explain, and update Zig code using current official Zig language and standard-library APIs. Use when an agent needs up-to-date Zig guidance for language features, typing, enums, control flow, allocators, data structures, `std`, `std.posix`, `std.fs`, `std.Io`, testing, `build.zig`, packages, C interop, or cross-platform systems programming.
 ---
 
 # Zig
 
 Use current official Zig sources, not stale model memory.
 
-This skill snapshot is written against Zig sources current on 2026-04-15:
+This skill snapshot was checked against official Zig sources on 2026-11-01:
 
-- latest stable: `0.16.0` released 2026-04-14
-- current `master`: use the download page for the exact current dev snapshot
+- latest stable: `0.17.0`, released 2026-10-01
+- current `master`: `0.18.0-dev.828+9da287565`, dated 2026-10-31
 
-Default to stable `0.16.0` unless the repo clearly pins `master` or a specific dev snapshot.
+Default to stable `0.17.0` unless the repo pins another version. Check the [official download index](https://ziglang.org/download/index.json) before treating these versions as current. Never silently upgrade an existing project's compiler.
 
 ## Start Here
 
@@ -33,7 +33,7 @@ Sort the task into one or more of these buckets:
 - allocators, containers, and ownership
 - strings, slices, pointers, and alignment
 - `std` modules such as `mem`, `fmt`, `json`, `testing`, and `Random`
-- `std.fs`, `std.Io`, `std.process`, `std.net`, and `std.posix`
+- `std.Io.File`, `std.Io.Dir`, `std.Io.net`, `std.process`, and `std.posix`
 - `build.zig` or package/import wiring
 - C interop or cross-platform OS work
 
@@ -42,7 +42,7 @@ Sort the task into one or more of these buckets:
 - Read [references/version-policy.md](references/version-policy.md) first when the target Zig version is unclear.
 - Read [references/language-core.md](references/language-core.md) for typing, enums, tagged unions, control flow, `comptime`, and builtin usage.
 - Read [references/stdlib-and-containers.md](references/stdlib-and-containers.md) for allocators, `ArrayList`, maps, enum collections, strings, formatting, JSON, and testing helpers.
-- Read [references/posix-and-os.md](references/posix-and-os.md) for `std.posix`, file descriptors, sockets, child processes, `std.net`, and cross-platform boundaries.
+- Read [references/posix-and-os.md](references/posix-and-os.md) for `std.posix`, file descriptors, sockets, child processes, `std.Io.net`, and cross-platform boundaries.
 - Read [references/build-and-interop.md](references/build-and-interop.md) for `build.zig`, modules, dependencies, tests, and C interop.
 
 ## Default Review Heuristics
@@ -53,7 +53,8 @@ Sort the task into one or more of these buckets:
 - Check whether `switch`, `for`, `while`, labeled blocks, `defer`, and `errdefer` are being used idiomatically rather than imitating C or Rust control flow.
 - Check whether container ownership and allocator lifetime are obvious at the call site.
 - Check whether `std.mem`, `std.fmt`, `std.json`, `std.testing`, and `std.posix` helpers already solve the problem before inventing custom utilities.
-- Check whether the code should use `std.net` or higher-level `std` APIs before dropping to raw `std.posix`.
+- Prefer `std.Io.File`, `std.Io.Dir`, `std.Io.net`, and `std.process.spawn` with an explicit `std.Io` value for OS work. Do not copy old `std.fs.File`, `std.net`, or `std.process.Child.init` examples.
+- Check exact declarations before using `std.posix`; many former wrappers are gone. Use `std.posix.system` only for an intentional platform-specific boundary.
 - Check whether `build.zig` is using current `std.Build` patterns instead of cargo-like or cmake-like abstractions.
 
 ## Reference Map
