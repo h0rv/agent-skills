@@ -1,6 +1,6 @@
 ---
 name: modern-python
-description: Write and review modern Python 3.13+ with correctness enforced by the type checker and linter. Use whenever writing, refactoring, reviewing, or designing Python code, data models, config objects, public APIs, async code, or tests, including quick scripts. Covers parse-don't-validate, illegal states, sentinels for overloaded None, exhaustive matching, TypeIs and TypeGuard, avoiding casts and dynamic attribute access, dataclasses versus Pydantic and NamedTuple, immutable state, structured concurrency, test strategy, API design, and the uv, ruff, and ty toolchain. This is a hub. Read the linked reference for the topic in play.
+description: Write and review modern Python 3.13+ with correctness enforced by the type checker and linter. Use whenever writing, refactoring, reviewing, or designing Python code, data models, config objects, public APIs, async code, or tests, including quick scripts. Covers parse-don't-validate, illegal states, sentinels for overloaded None, exhaustive matching, TypeIs and TypeGuard, avoiding casts and dynamic attribute access, dataclasses versus Pydantic and NamedTuple, immutable state, structured concurrency, free-threaded and own-GIL execution, Python 3.14/3.15 features, test strategy, API design, and the uv, ruff, and ty toolchain. This is a hub. Read the linked reference for the topic in play.
 ---
 
 # Modern Python: correct by construction
@@ -35,6 +35,7 @@ match what you're doing right now:
 | Writing a long `if`/`elif` chain or wondering whether a check is still needed | [references/control-flow.md](references/control-flow.md) |
 | Designing a function signature, class, or public module surface | [references/api-design.md](references/api-design.md) |
 | Writing `asyncio` code, spawning tasks, or reaching for `threading`/`multiprocessing` | [references/concurrency.md](references/concurrency.md) |
+| Choosing CPU parallelism, checking GIL state, using subinterpreters, or debugging native/thread contention | [references/runtime-parallelism.md](references/runtime-parallelism.md) — free-threading, own-GIL, build compatibility |
 | Deciding what still needs a test given how much the type checker already covers | [references/testing.md](references/testing.md) |
 | Wondering if there's a more direct modern stdlib/typing way to write something | [references/language-features.md](references/language-features.md) |
 
@@ -67,10 +68,13 @@ each of these unpacks into detail and examples.
 - **Am I firing off a task with `asyncio.gather`/`create_task`, or reaching
   for a thread/lock?** → make sure failure and cancellation are structured,
   not orphaned. → concurrency.md
+- **Am I claiming threads can't run Python in parallel, or that no GIL
+  makes shared state safe?** → check the build, live GIL state, ownership,
+  and dependency contracts. → runtime-parallelism.md
 - **Have I pushed everything I can into the type checker — what's left
   that actually needs a test?** → boundary parsers, runtime invariants,
   and behavior, not shape. → testing.md
 
-These compound: a value modeled as the right type usually also becomes
-immutable, exhaustively handled, and safe from shared-state bugs, almost
-for free.
+These compound: a value modeled as the right type is easier to make
+immutable and exhaustively handled. Types alone do not prove race freedom
+or thread-safe ownership.
