@@ -6,6 +6,12 @@ rather than an entity being edited in place. Prefer tuples over lists for
 collections whose size shouldn't change, and `Final` for module-level
 constants.
 
+These are shallow guarantees: a frozen dataclass can still contain a
+mutable list, and `Final` does not freeze its value at runtime. On 3.15+,
+`frozendict` gives an immutable mapping, but does not freeze its values
+either. For cross-thread sharing, choose immutable contents or explicit
+ownership/synchronization; see [runtime-parallelism.md](runtime-parallelism.md).
+
 A method that "changes" a value should return a new instance rather than
 mutating `self`:
 

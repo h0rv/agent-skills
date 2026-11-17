@@ -12,7 +12,20 @@ catches real bugs before they ship. See the [Python sentinel object
 pattern](https://python-patterns.guide/python/sentinel-object/) for the
 canonical treatment.
 
-## The default case: a unique object, compared by identity
+## On 3.15+, prefer a named built-in sentinel
+
+Python 3.15 adds `MISSING = sentinel("MISSING")` (PEP 661). It supplies a
+readable representation, preserves identity when copied, and supports
+type expressions and narrowing. Define it at importable module scope
+under the matching name if it must survive pickling; a local marker is
+not automatically transferable to another process or interpreter.
+Check support in the project's type checker before replacing an enum
+used for narrowing. See the [3.15 release notes](https://docs.python.org/3.15/whatsnew/3.15.html#pep-661-add-sentinel-built-in-type).
+
+For code that still supports 3.13/3.14, use the patterns below rather
+than a version-dependent sentinel factory or compatibility fallback.
+
+## A unique object, compared by identity
 
 ```python
 _UNSET = object()
@@ -32,7 +45,7 @@ compare a sentinel with `is`, never `==` — equality comparison defeats
 the whole point and turns it back into a sentinel *value*, which some
 unrelated piece of real data could accidentally collide with.
 
-## When the sentinel needs to type-narrow, use a single-member enum
+## On 3.13/3.14, use a single-member enum when narrowing matters
 
 A bare `object()` sentinel works at runtime but is awkward for a type
 checker to narrow cleanly out of a union. When you want `is` checks to

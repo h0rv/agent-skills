@@ -1,4 +1,4 @@
-# Concurrency: structured async, and threading when sync is required
+# Concurrency: structured lifetimes and deliberate parallelism
 
 The theme from [immutability-and-state.md](immutability-and-state.md)
 applies hardest here: concurrency bugs are the ones that only show up
@@ -56,6 +56,11 @@ async with asyncio.timeout(10), asyncio.TaskGroup() as tg:
     ...
 ```
 
+Cancellation is cooperative: use `try/finally` for cleanup and normally
+re-raise `CancelledError` after catching it. A timeout is not a hard kill
+of synchronous or native work. On 3.15+, `TaskGroup.cancel()` also allows
+explicit early termination; do not assume that method exists on 3.14.
+
 ## Never create a task and let go of it
 
 `asyncio.create_task(coro())` returns a `Task`, and the event loop only
@@ -96,16 +101,21 @@ async def increment() -> None:
         counter["value"] = current + 1
 ```
 
-If nothing in a critical section awaits, no lock is needed — the event
-loop can't switch tasks mid-block. The moment an `await` is inside it,
-assume interleaving is possible.
+If nothing in a critical section awaits, other tasks on that same event
+loop cannot interleave with it. This is not protection from other
+threads or reentrant callbacks. The moment an `await` is inside it,
+assume task interleaving is possible. One event loop still runs on one
+thread even with the GIL disabled; free-threading does not make its tasks
+automatically execute on multiple cores.
 
-## Threading and multiprocessing, for when sync code is what you have
+## Offload blocking work; choose CPU execution explicitly
 
-Plain CPython threads don't give parallelism for CPU-bound pure-Python
-code — the GIL means only one thread runs Python bytecode at a time —
-but they're the right tool for I/O-bound blocking work you can't easily
-make async (a blocking third-party client library, blocking file I/O).
+Threads work well for blocking I/O you cannot make async. For CPU-bound
+Python, the runtime matters: threads in one GIL-enabled interpreter
+serialize Python bytecode; threads in a free-threaded interpreter with
+the GIL disabled can execute it on multiple cores. Native libraries can
+also release the GIL. Do not turn a constraint of one configuration into
+a blanket claim about Python.
 
 Bridging a blocking call *from* async code: prefer `asyncio.to_thread`
 over managing an executor by hand — it's the direct, modern way to run a
@@ -114,6 +124,12 @@ blocking function without stalling the event loop:
 ```python
 result = await asyncio.to_thread(blocking_call, arg)
 ```
+
+`to_thread` propagates the caller's `ContextVar` context. Cancelling its
+await does **not** stop a function already running in a worker thread.
+For long-running work, own its lifetime, use a cooperative stop signal,
+and arrange shutdown; a surrounding `TaskGroup` does not join an
+otherwise untracked worker function when its awaiting task is cancelled.
 
 Running a pool of threads from sync code: use
 `concurrent.futures.ThreadPoolExecutor` as a context manager so shutdown
@@ -125,17 +141,26 @@ with ThreadPoolExecutor(max_workers=8) as pool:
     results = list(pool.map(blocking_call, items))
 ```
 
-For genuine CPU-bound parallelism, threads don't help — reach for
-`concurrent.futures.ProcessPoolExecutor` or `multiprocessing` instead,
-and budget for the real costs that come with it: arguments and results
-must be picklable, and process startup plus inter-process data transfer
-carries real overhead, so it pays off for chunky work, not many tiny
-calls. Free-threaded CPython (PEP 703, an optional build without the
-GIL) is a newer option that removes the GIL's constraint on
-thread-based CPU parallelism — it's progressed from experimental toward
-officially supported in recent releases, but check its current status
-and your dependencies' C-extension compatibility before relying on it in
-production, since this is a fast-moving area.
+For CPU work, choose among free-threaded threads, own-GIL
+`InterpreterPoolExecutor` (3.14+), and `ProcessPoolExecutor` deliberately.
+Their sharing, extension-compatibility, serialization, and crash
+boundaries differ. Read [runtime-parallelism.md](runtime-parallelism.md)
+before selecting one or claiming scalability.
+
+Bound outstanding work as well as worker count. In 3.14+,
+`Executor.map(..., buffersize=...)` limits submitted work whose results
+have not been yielded; the default still eagerly collects input.
+Executor context managers wait for running work on exit, but do not
+provide TaskGroup-style sibling cancellation. A future's cancellation
+or timeout does not terminate a running call.
+
+For process pools, use importable module-level callables, picklable
+arguments/results, and an `if __name__ == "__main__":` entry guard.
+In 3.14, `fork` is no longer the default start method anywhere: supported
+POSIX systems normally use `forkserver`, while Windows/macOS use `spawn`.
+Do not depend on inherited mutable globals or request `fork` merely to
+hide initialization bugs in a multithreaded process. See the
+[process-pool docs](https://docs.python.org/3.14/library/concurrent.futures.html#processpoolexecutor).
 
 ## Locking: same rule as everywhere else — isolate first, lock second
 

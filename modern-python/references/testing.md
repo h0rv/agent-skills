@@ -55,6 +55,15 @@ live inside a parse step rather than in a type signature.
   it doesn't prove the formula, the off-by-one, or the business rule is
   right.
 
+- **Concurrency and runtime compatibility.** Types do not prove race
+  freedom, shutdown, or extension safety. Exercise the actual imports
+  and calls on each supported conventional/free-threaded/own-GIL mode;
+  verify live GIL state after imports rather than trusting a build tag.
+  Arrange competing operations with barriers/events instead of sleeps,
+  and test cancellation and cleanup separately from throughput. See
+  [runtime-parallelism.md](runtime-parallelism.md) for the acceptance and
+  measurement checklist.
+
 ## Property-based testing for parse functions
 
 Boundary parsers are a strong fit for property-based testing (e.g. with
