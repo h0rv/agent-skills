@@ -179,7 +179,7 @@ memory use can outweigh parallel gains.
 
 In particular, **code-loading paths can change a CPU microbenchmark**.
 In CPython 3.14, explicit `compile()` suppresses code-constant
-immortalization; `runpy.run_path()` can use this path. Cold source loads
+immortalization; [`runpy.run_path()`][run-path] can use this path. Cold source loads
 and cached `.pyc` loads can therefore differ. A shared numeric literal
 used in a hot loop may create refcount contention; assigning that literal
 to a local variable does not create a worker-owned object. Compare the
@@ -218,4 +218,5 @@ thread-safety proof or full application compatibility.
 [thread-state]: https://docs.python.org/3.15/c-api/init.html
 [compile-path]: https://github.com/python/cpython/blob/v3.14.10/Python/bltinmodule.c
 [constants]: https://github.com/python/cpython/blob/v3.14.10/Objects/codeobject.c
+[run-path]: https://github.com/python/cpython/blob/v3.14.10/Lib/runpy.py
 [constant-issue]: https://github.com/python/cpython/issues/130851
